@@ -3,7 +3,7 @@ Another JavaScript Chart Rending Library.
 
 This one uses Snap.svg to make life a bit easier.
 
-[!basics](./images/basics.jpg)
+![basics](./images/basics.jpg)
 
 ## Example
 
