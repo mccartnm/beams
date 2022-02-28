@@ -1,0 +1,32 @@
+{
+  "name": "beams",
+  "version": "1.0.0",
+  "description": "Simple javascript chart library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mccartnm/beams.git"
+  },
+  "keywords": [
+    "charts"
+  ],
+  "author": "Michael McCartney",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mccartnm/beams/issues"
+  },
+  "homepage": "https://github.com/mccartnm/beams#readme",
+  "devDependencies": {
+    "@babel/preset-env": "^7.10.2",
+    "@babel/preset-react": "^7.10.1",
+    "babel-preset-minify": "^0.5.1",
+    "gulp": "^4.0.2",
+    "gulp-babel-minify": "^0.5.1",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-cli": "^2.3.0",
+    "gulp-concat": "^2.6.1"
+  }
+}
