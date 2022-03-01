@@ -30,8 +30,13 @@ class Interface extends Beams.EventInterface
         options = options || {};
         super(options);
      
+        this._loader = null;
+        this._loading = options.loading || false;
         this._margins = Beams.point(options.margins || [0, 0]);
         this._snap = Snap();
+
+        if (this._loading)
+            this.update_loader();
     }
 
     get snap() { return this._snap; }
@@ -42,6 +47,13 @@ class Interface extends Beams.EventInterface
     {
         this._margins = Beams.point(margins);
         this.render();
+    }
+
+    get loading() { return this._loading; }
+    set loading(isLoading) {
+        this._loading = isLoading;
+        this.update_loader();
+        this.emit('state:loading', this._loading);
     }
 
     /**
@@ -79,6 +91,42 @@ class Interface extends Beams.EventInterface
             place.appendChild(this.node);
             this.render();
         }
+    }
+
+    update_loader() {
+        if (!this.loading) {
+            if (this._loader)
+                this._loader.attr({'display': 'none'});
+            return;
+        }
+        if (!this._loader) {
+            this._loader = this.snap.path();
+            this._loader.attr({
+                d: 'M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50',
+                fill: '#fff'
+            });
+
+            // Snap.svg rotation animation is busted. Need to do it ourselves.
+            // Probably just need to add our own animation tool
+            this._loader.node.innerHTML = `
+                <animateTransform 
+                 attributeName="transform" 
+                 attributeType="XML" 
+                 type="rotate"
+                 dur="1s" 
+                 from="0 50 50"
+                 to="360 50 50" 
+                 repeatCount="indefinite" />`;
+        }
+
+        const box = this._snap.getBBox();
+        const lbox = this._loader.getBBox();
+
+        this._loader.paper.append(this._loader);
+        this._loader.attr({
+            transform: `t${box.cx - lbox.w},${box.cy - lbox.h*2}`,
+            display: undefined
+        });
     }
 
     /* -- Virtual Interface -- */

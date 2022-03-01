@@ -51,6 +51,7 @@ class Legend extends Beams.Interface
         for (var i = 0; i < d.length; i++)
         {
             const option = {
+                chart: this._chart,
                 topleft: topleft,
                 index: i,
                 total: d.length

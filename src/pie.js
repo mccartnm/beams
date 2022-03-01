@@ -54,7 +54,27 @@ class PieData extends Beams.Data
         )[option.index];
 
         if (!this._chip)
+        {
             this._chip = snap.rect();
+
+            const event = {
+                snap: snap,
+                element: this._chip,
+                data: new Proxy(this, data_interceptor(legend.chart))
+            };
+
+            this._chip.hover(
+                // Hover In
+                () => {
+                    legend.chart.emit('section:hover', event);
+                },
+
+                // Hover Out
+                () => {
+                    legend.chart.emit('section:leave', event);
+                }
+            );
+        }
 
         const p = option.topleft;
         const size = legend.style.chipSize;
@@ -90,11 +110,13 @@ class PieData extends Beams.Data
             })
         }
 
+        const lblbbox = this._label.getBBox();
+
         if (this.hovered) {
             this._hoverLine.attr({
                 x1: p.x + size + 6,
                 y1: p.y + size,
-                x2: p.x + size + this._label.getBBox().w,
+                x2: p.x + size + lblbbox.w,
                 y2: p.y + size,
                 opacity: '1',
             });
@@ -103,7 +125,10 @@ class PieData extends Beams.Data
             this._hoverLine.attr({ opacity: '0' });
         }
 
-        return size;
+        if (legend.direction == Beams.Vertical)
+            return size;
+
+        return lblbbox.w + size;
     }
 
     get path() { return this._path; }
@@ -111,6 +136,10 @@ class PieData extends Beams.Data
 };
 
 
+/**
+ * Proxy interceptor for catching changes to our data and
+ * applying it to the chart.
+ */
 const data_interceptor = function(chart) {
     return {
         set(obj, prop, value) {
@@ -122,6 +151,9 @@ const data_interceptor = function(chart) {
 }
 
 
+/**
+ * Implementation of a Pie Chart
+ */
 class PieChart extends Beams.Chart
 {
     constructor(options)
@@ -138,6 +170,8 @@ class PieChart extends Beams.Chart
         this.formatLabel = options.formatLabel || ((l, v) => l);
         this.drawLabels = options.drawLabels || false;
         this._lines = [];
+
+        this._loader = null;
 
         this.inject(options.inject);
         this.created(this.snap);
@@ -226,7 +260,7 @@ class PieChart extends Beams.Chart
                         // Hover in
                         () => {
                             this._data[idx].hovered = true;
-                            this.emit('hover:section', {
+                            this.emit('section:hover', {
                                 snap: this.snap,
                                 element: path,
                                 data: new Proxy(this._data[idx], data_interceptor(this))
@@ -235,7 +269,27 @@ class PieChart extends Beams.Chart
                         // Hover Out
                         () => {
                             this._data[idx].hovered = false;
-                            this.emit('leave:section', {
+                            this.emit('section:leave', {
+                                snap: this.snap,
+                                element: path,
+                                data: new Proxy(this._data[idx], data_interceptor(this))
+                            });
+                        }
+                    );
+
+                    path.click(
+                        () => {
+                            this.emit('section:click', {
+                                snap: this.snap,
+                                element: path,
+                                data: new Proxy(this._data[idx], data_interceptor(this))
+                            });
+                        }
+                    );
+
+                    path.dblclick(
+                        () => {
+                            this.emit('section:dblclick', {
                                 snap: this.snap,
                                 element: path,
                                 data: new Proxy(this._data[idx], data_interceptor(this))
@@ -249,7 +303,7 @@ class PieChart extends Beams.Chart
                 path.attr({
                     d: pd.path,
                     fill: pd.color || colors[index],
-                    stroke: this._data[0].color || colorsBright[index],
+                    stroke: pd.color || colorsBright[index],
                     strokeWidth: '2px',
                 });
                 index += 1;

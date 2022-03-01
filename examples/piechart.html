@@ -21,7 +21,7 @@
         }
 
         #legend {
-            width: 200px;
+            width: 600px;
             display: flex;
         }
 
@@ -32,7 +32,7 @@
     </style>
 </head>
 <body>
-    <div class="row-flex">
+    <div >
         <div id="put-chart-here">
         </div>
         <div id="legend">
@@ -88,6 +88,8 @@
         inject: '#legend',
         margins: [10, 10],
 
+        direction: Beams.Horizontal,
+
         style: {
             spacing: 15,
             chipSize: 20,
@@ -95,12 +97,20 @@
         }
     });
 
-    chart.on('hover:section', (event) => {
+    chart.on('section:hover', (event) => {
         event.data.color = chart.hover_grad;
     });
 
-    chart.on('leave:section', (event) => {
+    chart.on('section:leave', (event) => {
         event.data.color = null;
+    });
+
+    chart.on('section:click', (event) => {
+        console.log('cliuckkk');
+    });
+
+    chart.on('section:dblclick', (event) => {
+        console.log('dbl');
     });
 
     chart.data = [
@@ -116,15 +126,17 @@
             label: 'Spanner',
             value: 10220000000000
         },
-        {
-            label: 'Baz',
-            value: 1001400000120002
-        },
+        // {
+        //     label: 'Baz',
+        //     value: 1001400000120002
+        // },
         {
             label: 'Schmoo',
             value: 100140000012002
         },
     ]
+
+    // chart.loading = true;
 
     //
     // -- Line Chart
@@ -167,8 +179,6 @@
         }
     });
 
-
-
     lchart.data = [
         new Beams.LineData({
             data: [
@@ -203,6 +213,8 @@
             color: 'lightgreen'
         }),
     ];
+
+    // lchart.loading = true;
 
 </script>
 </html>

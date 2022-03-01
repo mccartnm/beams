@@ -42,6 +42,7 @@ class Chart extends Beams.Interface
         );
     }
 
+
     /* -- Virtual interface --  */
 
     get data() { throw Error('data getter is requried!'); }
