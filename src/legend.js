@@ -21,6 +21,30 @@
 */
 (function() {
 
+
+/**
+ * Style system for the Legends
+ */
+class LegendStyle extends Beams.Style
+{
+    defaults() {
+        return {
+            backgroundColor: 'none',
+            spacing: 8,
+
+            labelColor: 'white',
+            labelSize: '12px',
+            labelFont: 'monospace',
+
+            chipSize: 16,
+            chipStroke: 'none',
+            chipStrokeWidth: 'none',
+        };
+    }
+};
+Beams.LegendStyle = LegendStyle;
+
+
 /**
  * A basic legend for displaying chart data plot information
  */
@@ -30,16 +54,24 @@ class Legend extends Beams.Interface
         options = options || {};
         super(options);
         this._chart = options.chart || null;
+        this._chart.on('data:changed', this.clean.bind(this));
         this._chart.on('rendered', this.render.bind(this));
-        this._style = new Beams.LegendStyle(options.style);
 
+        this._groups = [];
         this.direction = options.direction || Beams.Vertical;
 
         this.inject(options.inject);
     }
 
+    StyleClass() { return LegendStyle; }
+
     get chart() { return this._chart; }
-    get style() { return new Proxy(this._style, Beams.style_interceptor); }
+
+    clean()
+    {
+        Beams.utils.destroy(this._groups);
+        this._groups = [];
+    }
 
     render()
     {
@@ -52,20 +84,46 @@ class Legend extends Beams.Interface
         {
             const option = {
                 chart: this._chart,
-                topleft: topleft,
+                topleft: Beams.point(0, 0),
                 index: i,
-                total: d.length
+                total: d.length,
+                snap: this.snap
             };
 
+            var g;
+            if (this._groups.length >= i) {
+                g = this.snap.g();
+                this._groups.push(g);
+                g._legend_data = d;
+            }
+            else {
+                g = this._groups[i];
+
+                if (g._legend_data != d) {
+                    g.remove(); // Replace this element
+                    g = this.snap.g();
+                    this._groups[i] = g;
+                    g._legend_data = d;
+                }
+            }
+
             var offset = d[i].legend_render(
-                this, this.snap, option
+                this, g, option
             );
             offset += this.style.spacing;
 
             if (this.direction == Beams.Vertical)
                 topleft.y += offset;
             else
+            {
+                if (topleft.x + offset > (box.x + box.w)) {
+                    topleft.x = box.x;
+                    topleft.y += this.style.chipSize + this.style.spacing;
+                }
+
+                g.attr({'transform': `t${topleft.x} ${topleft.y}`});
                 topleft.x += offset;
+            }
         }
     }
 };

@@ -6,38 +6,21 @@
     <title>Testing Charts</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js" integrity="sha512-Gk+uNk8NWN235mIkS6B7/424TsDuPDaoAsUekJCKTWLKP6wlaPv+PBGfO7dbvZeibVPGW+mYidz0vL0XaWwz4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="../build/beams.min.js"></script>
-    <style type="text/css">
-        body {
-            background-color:  rgb(50, 50, 50);
-        }
-        .row-flex {
-            display: flex;
-            flex-direction: row;
-        }
-
-        #put-chart-here {
-            width: 600px;
-            height: 400px;
-        }
-
-        #legend {
-            width: 600px;
-            display: flex;
-        }
-
-        #put-lchart-here {
-            width: 700px;
-            height: 400px;            
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="./examplestyle.css">
 </head>
 <body>
-    <div >
-        <div id="put-chart-here">
+    <div class="full-width row-flex">
+
+        <div class="col-6">
+            <div id="put-chart-here">
+            </div>
+            <div id="legend">
+            </div>
         </div>
-        <div id="legend">
+        <div class="col-6 center-children">
         </div>
     </div>
+
     <div id="put-lchart-here">
     </div>
 </body>
@@ -56,7 +39,6 @@
                 return readable(bytes) + units[i] + 'B';
             bytes = bytes / 1024;
         }
-        // If we're here - wtf are you hauling?!?
         return readable(bytes) + 'YB';
     };
 
@@ -67,7 +49,7 @@
     var chart = new Beams.PieChart({
         id: 'chart_id',
         inject: document.getElementById('put-chart-here'),
-        margins: [10, 10],
+        margins: [30,30],
 
         drawLabels: true,
 
@@ -81,6 +63,10 @@
                 "r(0,1,3)#3CBCD2-#243464"
             );
         },
+
+        style: {
+            loaderColor: 'rgb(15, 250, 160)',
+        }
     });
 
     var legend = new Beams.Legend({
@@ -93,7 +79,7 @@
         style: {
             spacing: 15,
             chipSize: 20,
-            chipStroke: 'white'
+            chipStroke: 'white',
         }
     });
 
@@ -105,38 +91,49 @@
         event.data.color = null;
     });
 
-    chart.on('section:click', (event) => {
-        console.log('cliuckkk');
-    });
+    // var slider = new Beams.Slider({
+    //     min: 10,
+    //     max: 200,
+    //     inject: '#'
+    // });
 
-    chart.on('section:dblclick', (event) => {
-        console.log('dbl');
-    });
+    // slider.on('changed', (val) => {
+    //     chart.get_data(0).value = val;
+    // });
 
-    chart.data = [
-        {
-            label: 'Foo',
-            value: 15233022222110,
-        },
-        {
-            label: 'Bar',
-            value: 1011111110000000
-        },
-        {
-            label: 'Spanner',
-            value: 10220000000000
-        },
-        // {
-        //     label: 'Baz',
-        //     value: 1001400000120002
-        // },
-        {
-            label: 'Schmoo',
-            value: 100140000012002
-        },
-    ]
+    // chart.on('section:click', (event) => {
+    // });
 
-    // chart.loading = true;
+    // chart.on('section:dblclick', (event) => {
+    // });
+
+    chart.loading = true;
+
+    setTimeout(() => {
+        chart.data = [
+            {
+                label: 'Foo',
+                value: 152330222222110,
+            },
+            {
+                label: 'Bar',
+                value: 101111111000000
+            },
+            {
+                label: 'Spanner',
+                value: 42200000200000
+            },
+            // {
+            //     label: 'Baz',
+            //     value: 1001400000120002
+            // },
+            {
+                label: 'Schmoo',
+                value: 60140000012002
+            },
+        ]
+        chart.loading = false;
+    }, 1000);
 
     //
     // -- Line Chart

@@ -192,6 +192,7 @@ Beams.axis_interceptor = {
     set(obj, prop, value) {
         obj[prop] = value;
         obj.emit('changed');
+        return true;
     }
 };
 

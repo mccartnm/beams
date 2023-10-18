@@ -21,57 +21,25 @@
 */
 (function() {
 
-/**
- * Style system for charts
- */
-class ChartStyle
+class Style
 {
     constructor(options)
     {
         options = options || {};
 
+        // All interfaces have the following style defaults:
         this._data = {
-            backgroundColor: 'none',
-            axisColor: 'white',
-            tickLabelStyle: {
-                'font-size': '9px',
-                'font-family': 'monospace',
-                'fill': 'white',
-            }
+            loaderColor: 'white',
+            loaderScale: 3
         };
 
+        Object.assign(this._data, this.defaults());
         Object.assign(this._data, options);
     }
+
+    defaults() { throw Error('defaults() not implemented!') }
 };
-Beams.ChartStyle = ChartStyle;
-
-/**
- * Style system for the Legends
- */
-class LegendStyle
-{
-    constructor(options)
-    {
-        options = options || {};
-
-        this._data = {
-            backgroundColor: 'none',
-            spacing: 8,
-
-            labelColor: 'white',
-            labelSize: '12px',
-            labelFont: 'monospace',
-
-            chipSize: 16,
-            chipStroke: 'none',
-            chipStrokeWidth: 'none',
-        };
-
-        Object.assign(this._data, options);
-    }
-};
-Beams.LegendStyle = LegendStyle;
-
+Beams.Style = Style;
 
 /**
  * Proxy object for use with the chart system. This

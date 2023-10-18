@@ -75,6 +75,23 @@ Beams.utils = {
            return [f(0),f(8),f(4)];
         } 
     },
+
+
+    visible_events(element, vis, invis) {
+        vis = vis || function() {};
+        invis = invis || function() {};
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting)
+                vis();
+
+            else
+                invis();
+        });
+
+        observer.observe(element);
+        return observer;
+    }
 };
 
 /**

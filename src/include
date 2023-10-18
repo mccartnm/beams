@@ -1,6 +1,7 @@
 constants.js
 math.js
 events.js
+style.js
 interface.js
 utils.js
 
@@ -8,7 +9,6 @@ utils.js
 axis.js
 data.js
 chart.js
-style.js
 
 # Legend
 legend.js

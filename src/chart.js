@@ -22,6 +22,25 @@
 (function(){
 
 /**
+ * Style system for charts
+ */
+class ChartStyle extends Beams.Style
+{
+    defaults() {
+        return {
+            backgroundColor: 'none',
+            axisColor: 'white',
+            tickLabelStyle: {
+                'font-size': '9px',
+                'font-family': 'monospace',
+                'fill': 'white',
+            }
+        };
+    }
+};
+Beams.ChartStyle = ChartStyle;
+
+/**
  * Base class to provide common chart components
  */
 class Chart extends Beams.Interface
@@ -30,18 +49,12 @@ class Chart extends Beams.Interface
         options = options || {};
         super(options);
         this.type = type;
-        this._style = new Beams.ChartStyle(options.style);
 
         // Optional routine callbacks
         this.created = options.created || (() => {});
     }
 
-    get style() {
-        return new Proxy(
-            this._style, Beams.style_interceptor
-        );
-    }
-
+    StyleClass() { return ChartStyle; }
 
     /* -- Virtual interface --  */
 

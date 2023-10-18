@@ -134,7 +134,7 @@ class PieData extends Beams.Data
     get path() { return this._path; }
     set path(p) { this._path = p; }
 };
-
+Beams.PieData = PieData;
 
 /**
  * Proxy interceptor for catching changes to our data and
@@ -146,6 +146,7 @@ const data_interceptor = function(chart) {
             obj[prop] = value;
             chart.normalize();
             chart.render();
+            return true;
         }
     }
 }
@@ -189,6 +190,7 @@ class PieChart extends Beams.Chart
                 this._data.push(values[i]);
             }
         }
+        this.emit('data:changed');
         this.normalize();
         this.render();
     }
@@ -312,7 +314,8 @@ class PieChart extends Beams.Chart
 
         for (var i = this._elements.length; i > this._data.length; i--)
         {
-            this._elements[i].remove();
+            if (this._elements[i])
+                this._elements[i].remove();
         }
         this._elements.length = this._data.length;
 
@@ -370,7 +373,7 @@ class PieChart extends Beams.Chart
                     p3.x + textpad, p3.y, lbl
                 );
 
-                var style = chart.style.tickLabelStyle;
+                var style = this.style.tickLabelStyle;
                 Object.assign(style, {
                     'text-anchor': left ? 'end' : 'start',
                     'dominant-baseline':'middle'
@@ -495,6 +498,8 @@ class PieChart extends Beams.Chart
                 pd.rad = 6.28319; // Full circle
             }
         }
+
+        this.emit('normalized');
     }
 };
 Beams.PieChart = PieChart;

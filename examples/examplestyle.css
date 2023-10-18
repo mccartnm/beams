@@ -1,0 +1,35 @@
+body {
+    background-color:  rgb(50, 50, 50);
+    color: rgb(180, 180, 180);
+    font-family: monospace;
+}
+.row-flex {
+    display: flex;
+    flex-direction: row;
+}
+#put-chart-here {
+    width: 600px;
+    height: 400px;
+}
+#legend {
+    width: 600px;
+    display: flex;
+}
+#put-lchart-here {
+    width: 700px;
+    height: 400px;            
+}
+
+.full-width {
+    width: 100%;
+}
+
+.col-6 {
+    width: 50%;
+}
+
+.center-children {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

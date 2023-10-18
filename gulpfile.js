@@ -56,16 +56,24 @@ function css(cb) {
     //     .pipe(gulp.dest('./build/'));
 }
 
+function copyit(cb) {
+    return gulp.src('./build/beams.min.js')
+        .pipe(gulp.dest('../rest-transfer/static/third'));
+}
+
 
 exports.js = javascript;
 exports.css = css;
+exports.copyit = copyit;
 exports.all = gulp.parallel(javascript);
 exports.watch = function() {
   // The task will be executed upon startup
-  gulp.watch('src/*', { ignoreInitial: false }, function(cb) {
-    // body omitted
-    javascript(cb);
-    cb();
-  });
+  gulp.watch('src/*', { ignoreInitial: false }, javascript);
 }
+
+exports.watch_copy = function() {
+  // The task will be executed upon startup
+  gulp.watch('src/*', { ignoreInitial: false }, gulp.series('js', 'copyit'));
+}
+
 exports.default = doNothing;

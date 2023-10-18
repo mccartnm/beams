@@ -31,6 +31,8 @@ class Data
     constructor(options) {
         options = options || {};
         this.hovered = false;
+
+        this.meta = options.meta || {};
     }
 
     render_legend(legend, snap, topleft) {}

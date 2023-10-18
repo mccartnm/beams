@@ -31,16 +31,27 @@ class Interface extends Beams.EventInterface
         super(options);
      
         this._loader = null;
+        this._loader_g = null;
         this._loading = options.loading || false;
+
         this._margins = Beams.point(options.margins || [0, 0]);
         this._snap = Snap();
+        this._style = new (this.StyleClass())(options.style || {});
 
         if (this._loading)
             this.update_loader();
     }
 
+    StyleClass() { throw Error('StyleClass() not implemented!'); }
+
     get snap() { return this._snap; }
     get node() { return this._snap.node; }
+
+    get style() {
+        return new Proxy(
+            this._style, Beams.style_interceptor
+        );
+    }
 
     get margins() { return this._margins; }
     set margins(margins)
@@ -95,15 +106,23 @@ class Interface extends Beams.EventInterface
 
     update_loader() {
         if (!this.loading) {
-            if (this._loader)
-                this._loader.attr({'display': 'none'});
+            if (this._loader_g)
+                this._loader_g.attr({'display': 'none'});
             return;
         }
+
+        // Get the box before we start any animation... things get weird
+        // otherwise. The transform of our object doesn't line up the way
+        // it should
+        const box = this._snap.getBBox();
+
         if (!this._loader) {
-            this._loader = this.snap.path();
+            this._loader_g = this.snap.g();
+
+            this._loader = this._loader_g.path();
             this._loader.attr({
-                d: 'M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50',
-                fill: '#fff'
+                d: `M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50`,
+                fill: this.style.loaderColor
             });
 
             // Snap.svg rotation animation is busted. Need to do it ourselves.
@@ -119,14 +138,24 @@ class Interface extends Beams.EventInterface
                  repeatCount="indefinite" />`;
         }
 
-        const box = this._snap.getBBox();
-        const lbox = this._loader.getBBox();
+        const lbox = this._loader_g.getBBox();
 
-        this._loader.paper.append(this._loader);
-        this._loader.attr({
-            transform: `t${box.cx - lbox.w},${box.cy - lbox.h*2}`,
+        this._loader_g.paper.append(this._loader_g);
+        this._loader_g.attr({
             display: undefined
         });
+
+        const scale = this.style.loaderScale;
+
+        this._loader_g.node.setAttribute(
+            'transform', `
+                matrix(
+                    ${scale}, 0, 0, ${scale},
+                    ${(box.cx) - 50 * scale},
+                    ${(box.cy) - 50 * scale}
+                )
+            `
+        );
     }
 
     /* -- Virtual Interface -- */
